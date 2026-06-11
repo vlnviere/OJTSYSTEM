@@ -290,6 +290,30 @@ announcementForm?.addEventListener("submit", (event) => {
   renderAnnouncements();
 });
 
+document.addEventListener("click", (event) => {
+  const actionButton = event.target.closest("[data-announcement-action]");
+  if (!actionButton) return;
+
+  const announcements = getAnnouncements();
+  const announcementId = actionButton.dataset.announcementId;
+
+  if (actionButton.dataset.announcementAction === "remove") {
+    saveStoredItems("gthAnnouncements", announcements.filter((item) => item.id !== announcementId));
+    renderAnnouncements();
+    return;
+  }
+
+  if (actionButton.dataset.announcementAction === "toggle-pin") {
+    const updatedAnnouncements = announcements.map((item) => {
+      if (item.id !== announcementId) return item;
+      return { ...item, pinned: !item.pinned };
+    });
+
+    saveStoredItems("gthAnnouncements", updatedAnnouncements);
+    renderAnnouncements();
+  }
+});
+
 function getVideos() {
   const stored = getStoredItems("gthVideos", null);
   if (stored) return stored;
