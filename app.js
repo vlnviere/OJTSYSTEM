@@ -343,7 +343,7 @@ function extractYoutubeId(url) {
 
 function renderVideoCard(video, options = {}) {
   const wrapper = document.createElement("article");
-  wrapper.className = options.admin ? "video-card" : "col-12 col-md-6 video-card-column";
+  wrapper.className = options.admin ? "col-12 col-md-6 col-xxl-4 video-card-column" : "col-12 col-md-6 video-card-column";
 
   const card = document.createElement("div");
   card.className = "card video-resource h-100";
@@ -409,7 +409,7 @@ function renderVideos() {
 
     if (!videos.length) {
       const empty = document.createElement("p");
-      empty.className = "text-secondary mb-0";
+      empty.className = "col-12 text-secondary mb-0";
       empty.textContent = "No videos posted yet.";
       adminVideos.appendChild(empty);
     } else {
