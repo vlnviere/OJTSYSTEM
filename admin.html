@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Global Techno Hub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="login-shell" id="adminLogin">
+    <div class="card login-card">
+      <div class="card-body p-4">
+        <div class="text-center mb-4">
+          <img src="assets/global-techno-hub-logo.jpg" alt="Global Techno Hub Learning Center logo" class="login-logo mb-3">
+          <p class="section-label mb-1">Admin access</p>
+          <h1 class="h4 mb-1">Global Techno Hub</h1>
+          <p class="text-secondary mb-0">Sign in to manage courses and reports.</p>
+        </div>
+        <form id="adminLoginForm" class="vstack gap-3">
+          <label class="form-label mb-0">
+            Username
+            <input class="form-control mt-1" id="adminUsername" type="text" autocomplete="username" required>
+          </label>
+          <label class="form-label mb-0">
+            Password
+            <input class="form-control mt-1" id="adminPassword" type="password" autocomplete="current-password" required>
+          </label>
+          <p class="alert alert-info mb-0">Demo account: <strong>Admin / 123</strong></p>
+          <p class="alert alert-danger d-none mb-0" id="loginError">Invalid username or password.</p>
+          <button class="btn btn-primary w-100" type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div class="d-none" id="adminApp">
+    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+      <div class="container-fluid px-3 px-lg-4">
+        <a class="navbar-brand d-flex align-items-center gap-3" href="index.html">
+          <img src="assets/global-techno-hub-logo.jpg" alt="Global Techno Hub Learning Center logo" class="brand-logo">
+          <span class="lh-sm">
+            <strong class="d-block">Global Techno Hub</strong>
+            <small class="text-secondary">Admin Dashboard</small>
+          </span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavigation" aria-controls="adminNavigation" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="adminNavigation">
+          <ul class="navbar-nav ms-auto gap-lg-1">
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#dashboard">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
+            <li class="nav-item"><a class="nav-link" href="#learners">Learners</a></li>
+            <li class="nav-item"><a class="nav-link" href="#documents">Documents</a></li>
+            <li class="nav-item"><a class="nav-link" href="#reports">Reports</a></li>
+            <li class="nav-item"><a class="nav-link" href="#automation">Automation</a></li>
+            <li class="nav-item"><a class="nav-link" href="#admin">Admin</a></li>
+          </ul>
+          <button class="btn btn-outline-secondary ms-lg-3 mt-2 mt-lg-0" type="button" id="adminLogout">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container-fluid px-3 px-lg-4 py-4">
+      <header class="d-flex flex-column flex-xl-row justify-content-between gap-3 mb-4">
+        <div>
+          <p class="section-label mb-1">Training operations</p>
+          <h1 class="display-title mb-0">Admin LMS Dashboard</h1>
+        </div>
+        <div class="d-flex flex-wrap gap-2 align-items-start">
+          <button class="btn btn-outline-secondary" type="button">Search</button>
+          <button class="btn btn-outline-secondary" type="button">Import</button>
+          <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#courseModal">New Course</button>
+        </div>
+      </header>
+
+      <section class="row g-3 mb-3" id="dashboard" aria-label="Learning management summary">
+        <div class="col-12 col-sm-6 col-xl-3">
+          <article class="card metric-card h-100">
+            <div class="card-body">
+              <span class="text-secondary">Active courses</span>
+              <strong class="metric-value d-block">12</strong>
+              <small class="text-secondary">4 delivering this week</small>
+            </div>
+          </article>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <article class="card metric-card h-100">
+            <div class="card-body">
+              <span class="text-secondary">Learners tracked</span>
+              <strong class="metric-value d-block">186</strong>
+              <small class="text-secondary">78% average progress</small>
+            </div>
+          </article>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <article class="card metric-card h-100">
+            <div class="card-body">
+              <span class="text-secondary">Completion rate</span>
+              <strong class="metric-value d-block">84%</strong>
+              <small class="text-secondary">+9% from last month</small>
+            </div>
+          </article>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <article class="card metric-card h-100">
+            <div class="card-body">
+              <span class="text-secondary">Open reports</span>
+              <strong class="metric-value d-block">7</strong>
+              <small class="text-secondary">2 need review</small>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="row g-3 mb-3">
+        <div class="col-12 col-xl-8" id="courses">
+          <section class="card h-100">
+            <div class="card-body">
+              <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+                <div>
+                  <p class="section-label mb-1">Deliver courses</p>
+                  <h2 class="h5 mb-0">Course Catalog</h2>
+                </div>
+                <div class="btn-group align-self-start" role="group" aria-label="Course filter">
+                  <button class="btn btn-outline-primary active" type="button" data-filter="all">All</button>
+                  <button class="btn btn-outline-primary" type="button" data-filter="live">Live</button>
+                  <button class="btn btn-outline-primary" type="button" data-filter="draft">Draft</button>
+                </div>
+              </div>
+
+              <div class="vstack gap-3" id="courseList">
+                <article class="card course-card" data-status="live">
+                  <div class="row g-0">
+                    <div class="col-md-3 course-strip course-strip-primary"><span>01</span></div>
+                    <div class="col-md-9">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between gap-2 mb-2">
+                          <h3 class="h6 mb-0">OJT Onboarding Essentials</h3>
+                          <span class="badge text-bg-success">Live</span>
+                        </div>
+                        <p class="text-secondary mb-3">Role orientation, workplace policies, and required first-week modules.</p>
+                        <div class="d-flex justify-content-between small mb-1"><span>Progress</span><strong>92%</strong></div>
+                        <div class="progress" role="progressbar" aria-label="Onboarding Essentials progress" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100">
+                          <div class="progress-bar" style="width: 92%"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="card course-card" data-status="live">
+                  <div class="row g-0">
+                    <div class="col-md-3 course-strip course-strip-coral"><span>02</span></div>
+                    <div class="col-md-9">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between gap-2 mb-2">
+                          <h3 class="h6 mb-0">Safety and Compliance</h3>
+                          <span class="badge text-bg-success">Live</span>
+                        </div>
+                        <p class="text-secondary mb-3">Incident reporting, lab safety, data privacy, and compliance checks.</p>
+                        <div class="d-flex justify-content-between small mb-1"><span>Progress</span><strong>76%</strong></div>
+                        <div class="progress" role="progressbar" aria-label="Safety and Compliance progress" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100">
+                          <div class="progress-bar bg-coral" style="width: 76%"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="card course-card" data-status="draft">
+                  <div class="row g-0">
+                    <div class="col-md-3 course-strip course-strip-sand"><span>03</span></div>
+                    <div class="col-md-9">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between gap-2 mb-2">
+                          <h3 class="h6 mb-0">Supervisor Skills Workshop</h3>
+                          <span class="badge text-bg-warning">Draft</span>
+                        </div>
+                        <p class="text-secondary mb-3">Coaching checklists, feedback templates, and learner evaluation rubrics.</p>
+                        <div class="d-flex justify-content-between small mb-1"><span>Readiness</span><strong>48%</strong></div>
+                        <div class="progress" role="progressbar" aria-label="Supervisor Skills Workshop readiness" aria-valuenow="48" aria-valuemin="0" aria-valuemax="100">
+                          <div class="progress-bar bg-sand" style="width: 48%"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="col-12 col-xl-4" id="learners">
+          <section class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <p class="section-label mb-1">Track learners</p>
+                  <h2 class="h5 mb-0">Learner Progress</h2>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" type="button">Export</button>
+              </div>
+              <div class="list-group list-group-flush">
+                <div class="list-group-item d-flex align-items-center gap-3 px-0">
+                  <span class="avatar">AV</span>
+                  <div class="flex-grow-1"><strong class="d-block">Andrea Valdez</strong><small class="text-secondary">Onboarding Essentials</small></div>
+                  <span class="fw-bold">96%</span>
+                </div>
+                <div class="list-group-item d-flex align-items-center gap-3 px-0">
+                  <span class="avatar">JM</span>
+                  <div class="flex-grow-1"><strong class="d-block">Jomar Mercado</strong><small class="text-secondary">Safety and Compliance</small></div>
+                  <span class="fw-bold">81%</span>
+                </div>
+                <div class="list-group-item d-flex align-items-center gap-3 px-0">
+                  <span class="avatar">LC</span>
+                  <div class="flex-grow-1"><strong class="d-block">Lara Cruz</strong><small class="text-secondary">Supervisor Workshop</small></div>
+                  <span class="fw-bold">42%</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="row g-3">
+        <div class="col-12 col-md-6 col-xl-3" id="documents">
+          <article class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <p class="section-label mb-1">Document</p>
+                  <h2 class="h5 mb-0">Resource Library</h2>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" type="button">Upload</button>
+              </div>
+              <ul class="list-unstyled vstack gap-3 mb-0">
+                <li class="d-flex gap-2"><span class="file-pill">PDF</span><span>OJT Handbook<br><small class="text-secondary">Updated today</small></span></li>
+                <li class="d-flex gap-2"><span class="file-pill">DOC</span><span>Evaluation Rubric<br><small class="text-secondary">3 reviewers</small></span></li>
+                <li class="d-flex gap-2"><span class="file-pill">VID</span><span>Orientation Recording<br><small class="text-secondary">24 min</small></span></li>
+              </ul>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3" id="reports">
+          <article class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <p class="section-label mb-1">Report</p>
+                  <h2 class="h5 mb-0">Training Outcomes</h2>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" type="button">Refresh</button>
+              </div>
+              <div class="bar-chart mb-3" aria-label="Course completion by month">
+                <span style="height: 42%"></span>
+                <span style="height: 58%"></span>
+                <span style="height: 66%"></span>
+                <span style="height: 84%"></span>
+                <span style="height: 78%"></span>
+              </div>
+              <p class="text-secondary mb-0">Completion, overdue modules, and learner activity are ready for review.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3" id="automation">
+          <article class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <p class="section-label mb-1">Automate</p>
+                  <h2 class="h5 mb-0">Rules</h2>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" type="button">Add Rule</button>
+              </div>
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="ruleReminder" checked>
+                <label class="form-check-label" for="ruleReminder">Send overdue reminders</label>
+              </div>
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="ruleCertificate" checked>
+                <label class="form-check-label" for="ruleCertificate">Issue certificates</label>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="ruleEnroll">
+                <label class="form-check-label" for="ruleEnroll">Auto-enroll trainees</label>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3" id="admin">
+          <article class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <p class="section-label mb-1">Administer</p>
+                  <h2 class="h5 mb-0">System Controls</h2>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" type="button">Settings</button>
+              </div>
+              <div class="row g-2">
+                <div class="col-6"><button class="btn btn-light w-100 border" type="button">Users</button></div>
+                <div class="col-6"><button class="btn btn-light w-100 border" type="button">Roles</button></div>
+                <div class="col-6"><button class="btn btn-light w-100 border" type="button">Permissions</button></div>
+                <div class="col-6"><button class="btn btn-light w-100 border" type="button">Certificates</button></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal fade" id="courseModal" tabindex="-1" aria-labelledby="courseModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content">
+          <div class="modal-header">
+            <div>
+              <p class="section-label mb-1">Create course</p>
+              <h2 class="modal-title fs-5" id="courseModalLabel">New Training Course</h2>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body vstack gap-3">
+            <label class="form-label mb-0">Course title<input class="form-control mt-1" type="text" placeholder="Enter course name"></label>
+            <label class="form-label mb-0">Delivery type<select class="form-select mt-1"><option>Self-paced</option><option>Instructor-led</option><option>Blended</option></select></label>
+            <label class="form-label mb-0">Description<textarea class="form-control mt-1" rows="4" placeholder="Describe the learning goal"></textarea></label>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary">Create</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
