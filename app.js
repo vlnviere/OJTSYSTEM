@@ -16,12 +16,13 @@ const announcementForm = document.querySelector("#announcementForm");
 const adminAnnouncements = document.querySelector("#adminAnnouncements");
 const studentAnnouncements = document.querySelector("#studentAnnouncements");
 const studentAnnouncementClass = document.querySelector("#studentAnnouncementClass");
+const announcementToggles = document.querySelectorAll(".announcement-toggle");
 const chatbox = document.querySelector("#chatbox");
 const chatForm = document.querySelector("#chatForm");
 const chatMessage = document.querySelector("#chatMessage");
 const chatMessages = document.querySelector("#chatMessages");
 const chatClassroom = document.querySelector("#chatClassroom");
-const chatToggle = document.querySelector(".chat-toggle");
+const chatToggles = document.querySelectorAll(".chat-toggle");
 const videoForm = document.querySelector("#videoForm");
 const videoError = document.querySelector("#videoError");
 const adminVideos = document.querySelector("#adminVideos");
@@ -200,6 +201,10 @@ function saveStoredItems(key, items) {
   localStorage.setItem(key, JSON.stringify(items));
 }
 
+function getCurrentAuthor() {
+  return document.body.contains(adminApp) ? "Admin" : "Student";
+}
+
 function formatDate(value) {
   return new Intl.DateTimeFormat("en", {
     month: "short",
@@ -207,6 +212,14 @@ function formatDate(value) {
     hour: "numeric",
     minute: "2-digit"
   }).format(new Date(value));
+}
+
+function getAllAnnouncementComments() {
+  return getStoredItems("gthAnnouncementComments", []);
+}
+
+function getAnnouncementComments(announcementId) {
+  return getAllAnnouncementComments().filter((comment) => comment.announcementId === announcementId);
 }
 
 function renderAnnouncementCard(announcement, options = {}) {
@@ -243,6 +256,66 @@ function renderAnnouncementCard(announcement, options = {}) {
   message.textContent = announcement.message;
 
   article.append(meta, subject, message);
+
+  const comments = getAnnouncementComments(announcement.id);
+  const commentsSection = document.createElement("div");
+  commentsSection.className = "announcement-comments mt-3";
+
+  const commentsTitle = document.createElement("h4");
+  commentsTitle.className = "h6 mb-2";
+  commentsTitle.textContent = "Comments";
+
+  const commentsList = document.createElement("div");
+  commentsList.className = "vstack gap-2 mb-2";
+
+  if (!comments.length) {
+    const empty = document.createElement("p");
+    empty.className = "text-secondary small mb-0";
+    empty.textContent = "No comments yet.";
+    commentsList.appendChild(empty);
+  } else {
+    comments.forEach((comment) => {
+      const commentItem = document.createElement("div");
+      commentItem.className = "announcement-comment";
+
+      const commentMeta = document.createElement("small");
+      commentMeta.className = "text-secondary d-block";
+      commentMeta.textContent = `${comment.author} - ${formatDate(comment.createdAt)}`;
+
+      const commentText = document.createElement("p");
+      commentText.className = "mb-0";
+      commentText.textContent = comment.text;
+
+      commentItem.append(commentMeta, commentText);
+      commentsList.appendChild(commentItem);
+    });
+  }
+
+  const commentForm = document.createElement("form");
+  commentForm.className = "announcement-comment-form d-flex gap-2";
+  commentForm.dataset.announcementCommentForm = announcement.id;
+
+  const commentLabel = document.createElement("label");
+  commentLabel.className = "visually-hidden";
+  commentLabel.setAttribute("for", `comment-${announcement.id}`);
+  commentLabel.textContent = "Comment";
+
+  const commentInput = document.createElement("input");
+  commentInput.className = "form-control form-control-sm";
+  commentInput.id = `comment-${announcement.id}`;
+  commentInput.name = "comment";
+  commentInput.type = "text";
+  commentInput.placeholder = "Write a comment";
+  commentInput.required = true;
+
+  const commentButton = document.createElement("button");
+  commentButton.className = "btn btn-primary btn-sm";
+  commentButton.type = "submit";
+  commentButton.textContent = "Comment";
+
+  commentForm.append(commentLabel, commentInput, commentButton);
+  commentsSection.append(commentsTitle, commentsList, commentForm);
+  article.appendChild(commentsSection);
 
   if (options.admin) {
     const actions = document.createElement("div");
@@ -330,6 +403,30 @@ announcementForm?.addEventListener("submit", (event) => {
   announcements.unshift(announcement);
   saveStoredItems("gthAnnouncements", announcements);
   announcementForm.reset();
+  renderAnnouncements();
+});
+
+document.addEventListener("submit", (event) => {
+  const form = event.target.closest("[data-announcement-comment-form]");
+  if (!form) return;
+
+  event.preventDefault();
+
+  const input = form.querySelector("input[name='comment']");
+  const text = input.value.trim();
+  if (!text) return;
+
+  const comments = getAllAnnouncementComments();
+  comments.push({
+    id: `announcement-comment-${Date.now()}`,
+    announcementId: form.dataset.announcementCommentForm,
+    author: getCurrentAuthor(),
+    text,
+    createdAt: new Date().toISOString()
+  });
+
+  saveStoredItems("gthAnnouncementComments", comments);
+  input.value = "";
   renderAnnouncements();
 });
 
@@ -623,7 +720,7 @@ function renderChatMessages() {
 
     const meta = document.createElement("small");
     meta.className = "text-secondary d-block";
-    meta.textContent = `${message.author} · ${formatDate(message.createdAt)}`;
+    meta.textContent = `${message.author} - ${formatDate(message.createdAt)}`;
 
     const text = document.createElement("p");
     text.className = "mb-0";
@@ -658,9 +755,21 @@ chatForm?.addEventListener("submit", (event) => {
   renderChatMessages();
 });
 
-chatToggle?.addEventListener("click", () => {
-  chatbox?.classList.toggle("chatbox-collapsed");
-  chatToggle.textContent = chatbox?.classList.contains("chatbox-collapsed") ? "Open" : "Minimize";
+announcementToggles.forEach((toggle) => {
+  toggle.addEventListener("click", () => {
+    const announcementList = toggle.closest(".card-body")?.querySelector(".announcement-list");
+    if (!announcementList) return;
+
+    announcementList.classList.toggle("announcement-list-collapsed");
+    toggle.textContent = announcementList.classList.contains("announcement-list-collapsed") ? "Open" : "Minimize";
+  });
+});
+
+chatToggles.forEach((toggle) => {
+  toggle.addEventListener("click", () => {
+    chatbox?.classList.toggle("chatbox-collapsed");
+    toggle.textContent = chatbox?.classList.contains("chatbox-collapsed") ? "Open" : "Minimize";
+  });
 });
 
 function showAdminApp() {

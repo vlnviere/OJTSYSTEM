@@ -192,6 +192,22 @@ body {
   background: linear-gradient(135deg, #fffaf1, #fff);
 }
 
+.announcement-list-collapsed {
+  display: none !important;
+}
+
+.announcement-comments {
+  padding-top: 0.75rem;
+  border-top: 1px solid #e4eef2;
+}
+
+.announcement-comment {
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #e4eef2;
+  border-radius: 0.5rem;
+  background: #f8fbfc;
+}
+
 .student-dashboard-shell {
   display: grid;
   grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
@@ -242,6 +258,10 @@ body {
 
 .student-section-card.active {
   display: block;
+}
+
+.row.student-section-card.active {
+  display: flex;
 }
 
 .student-course-grid,

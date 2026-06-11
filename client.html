@@ -17,20 +17,6 @@
           <small class="text-secondary" id="classroomName">Client Portal</small>
         </span>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#clientNavigation" aria-controls="clientNavigation" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="clientNavigation">
-        <ul class="navbar-nav ms-auto gap-lg-1">
-          <li class="nav-item"><a class="nav-link active" aria-current="page" href="#dashboard">My Learning</a></li>
-          <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
-          <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
-          <li class="nav-item"><a class="nav-link" href="#videos">Videos</a></li>
-          <li class="nav-item"><a class="nav-link" href="#grades">Grades</a></li>
-          <li class="nav-item"><a class="nav-link" href="#student-chat">Student Chats</a></li>
-          <li class="nav-item"><a class="nav-link" href="classrooms.html">Classrooms</a></li>
-        </ul>
-      </div>
     </div>
   </nav>
 
@@ -101,7 +87,10 @@
                 <p class="section-label mb-1">Class updates</p>
                 <h2 class="h5 mb-0">Announcements</h2>
               </div>
-              <span class="badge text-bg-info align-self-start" id="studentAnnouncementClass">Current classroom</span>
+              <div class="d-flex flex-wrap gap-2 align-self-start">
+                <span class="badge text-bg-info" id="studentAnnouncementClass">Current classroom</span>
+                <button class="btn btn-outline-secondary btn-sm announcement-toggle" type="button">Minimize</button>
+              </div>
             </div>
             <div class="announcement-list vstack gap-3" id="studentAnnouncements"></div>
           </div>
@@ -221,7 +210,6 @@
                 <p class="section-label mb-1">Class chat</p>
                 <h2 class="h5 mb-0">Student Chats</h2>
               </div>
-              <button class="btn btn-outline-secondary btn-sm chat-toggle" type="button">Minimize</button>
             </div>
             <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
             <form class="chat-form d-flex gap-2 mt-2" id="chatForm">
