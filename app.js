@@ -261,8 +261,8 @@ function renderAnnouncementCard(announcement, options = {}) {
   const toggleButton = document.createElement("button");
   toggleButton.className = "btn btn-outline-secondary btn-sm ms-auto";
   toggleButton.type = "button";
-  toggleButton.dataset.announcementAction = "toggle-collapse";
-  toggleButton.textContent = "Minimize";
+  toggleButton.dataset.announcementAction = "toggle-comments";
+  toggleButton.textContent = "Minimize Comments";
 
   const header = document.createElement("div");
   header.className = "d-flex flex-wrap align-items-start gap-2";
@@ -459,12 +459,12 @@ document.addEventListener("click", (event) => {
   const actionButton = event.target.closest("[data-announcement-action]");
   if (!actionButton) return;
 
-  if (actionButton.dataset.announcementAction === "toggle-collapse") {
-    const body = actionButton.closest(".announcement-item")?.querySelector(".announcement-card-body");
-    if (!body) return;
+  if (actionButton.dataset.announcementAction === "toggle-comments") {
+    const comments = actionButton.closest(".announcement-item")?.querySelector(".announcement-comments");
+    if (!comments) return;
 
-    body.classList.toggle("announcement-card-body-collapsed");
-    actionButton.textContent = body.classList.contains("announcement-card-body-collapsed") ? "Open" : "Minimize";
+    comments.classList.toggle("announcement-comments-collapsed");
+    actionButton.textContent = comments.classList.contains("announcement-comments-collapsed") ? "Open Comments" : "Minimize Comments";
     return;
   }
 
@@ -741,6 +741,22 @@ function formatDueDate(value) {
   }).format(new Date(`${value}T00:00:00`));
 }
 
+function formatFileSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function getAssignmentSubmissions() {
+  return getStoredItems("gthAssignmentSubmissions", []);
+}
+
+function getAssignmentSubmission(assignmentId) {
+  return getAssignmentSubmissions().find((submission) => {
+    return submission.assignmentId === assignmentId && submission.classroom === selectedClassroom;
+  });
+}
+
 function renderAssignmentCard(assignment, options = {}) {
   const wrapper = document.createElement("article");
   wrapper.className = options.admin ? "col-12 col-md-6 col-xxl-4" : "col-12";
@@ -790,6 +806,57 @@ function renderAssignmentCard(assignment, options = {}) {
 
     actions.appendChild(removeButton);
     body.appendChild(actions);
+  } else {
+    const submission = getAssignmentSubmission(assignment.id);
+    const uploadForm = document.createElement("form");
+    uploadForm.className = "assignment-upload-form vstack gap-2 mt-3";
+    uploadForm.dataset.assignmentUploadForm = assignment.id;
+
+    const uploadLabel = document.createElement("label");
+    uploadLabel.className = "form-label mb-0";
+    uploadLabel.textContent = "Upload files";
+
+    const fileInput = document.createElement("input");
+    fileInput.className = "form-control mt-1";
+    fileInput.name = "assignmentFiles";
+    fileInput.type = "file";
+    fileInput.multiple = true;
+    fileInput.required = true;
+
+    const submitButton = document.createElement("button");
+    submitButton.className = "btn btn-primary btn-sm align-self-start";
+    submitButton.type = "submit";
+    submitButton.textContent = submission ? "Replace Upload" : "Upload";
+
+    uploadLabel.appendChild(fileInput);
+    uploadForm.append(uploadLabel, submitButton);
+    body.appendChild(uploadForm);
+
+    if (submission) {
+      const submitted = document.createElement("div");
+      submitted.className = "assignment-submission mt-3";
+
+      const submittedTitle = document.createElement("strong");
+      submittedTitle.className = "d-block mb-1";
+      submittedTitle.textContent = "Submitted files";
+
+      const submittedTime = document.createElement("small");
+      submittedTime.className = "text-secondary d-block mb-2";
+      submittedTime.textContent = formatDate(submission.submittedAt);
+
+      const fileList = document.createElement("ul");
+      fileList.className = "list-unstyled vstack gap-1 mb-0";
+
+      submission.files.forEach((file) => {
+        const fileItem = document.createElement("li");
+        fileItem.className = "small";
+        fileItem.textContent = `${file.name} (${formatFileSize(file.size)})`;
+        fileList.appendChild(fileItem);
+      });
+
+      submitted.append(submittedTitle, submittedTime, fileList);
+      body.appendChild(submitted);
+    }
   }
 
   card.appendChild(body);
@@ -867,8 +934,40 @@ document.addEventListener("click", (event) => {
 
   if (actionButton.dataset.assignmentAction === "remove") {
     saveStoredItems("gthAssignments", getAssignments().filter((item) => item.id !== actionButton.dataset.assignmentId));
+    saveStoredItems("gthAssignmentSubmissions", getAssignmentSubmissions().filter((item) => item.assignmentId !== actionButton.dataset.assignmentId));
     renderAssignments();
   }
+});
+
+document.addEventListener("submit", (event) => {
+  const form = event.target.closest("[data-assignment-upload-form]");
+  if (!form) return;
+
+  event.preventDefault();
+
+  const fileInput = form.querySelector("input[type='file']");
+  const files = Array.from(fileInput.files || []);
+  if (!files.length) return;
+
+  const assignmentId = form.dataset.assignmentUploadForm;
+  const submissions = getAssignmentSubmissions().filter((submission) => {
+    return !(submission.assignmentId === assignmentId && submission.classroom === selectedClassroom);
+  });
+
+  submissions.push({
+    id: `assignment-submission-${Date.now()}`,
+    assignmentId,
+    classroom: selectedClassroom,
+    files: files.map((file) => ({
+      name: file.name,
+      size: file.size,
+      type: file.type || "Unknown"
+    })),
+    submittedAt: new Date().toISOString()
+  });
+
+  saveStoredItems("gthAssignmentSubmissions", submissions);
+  renderAssignments();
 });
 
 function getActiveChatClassroom() {
