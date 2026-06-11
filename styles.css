@@ -196,10 +196,58 @@ body {
   height: 100%;
 }
 
+.student-course-panel,
+.student-announcement-panel {
+  flex: 0 0 100%;
+  max-width: 100%;
+  padding-right: calc(var(--bs-gutter-x) * 0.5);
+  padding-left: calc(var(--bs-gutter-x) * 0.5);
+}
+
 .student-feed .announcement-list {
   max-height: 24rem;
   overflow-y: auto;
   padding-right: 0.15rem;
+}
+
+.student-course-panel .course-search {
+  flex-wrap: wrap;
+}
+
+.student-course-panel .course-search .form-control {
+  min-width: 0;
+}
+
+.student-course-panel .btn-group {
+  flex-wrap: wrap;
+}
+
+.student-course-panel .course-strip {
+  display: none;
+}
+
+.student-course-panel .course-card .col-md-9 {
+  width: 100%;
+}
+
+.student-course-panel .course-card .card-body {
+  padding: 0.85rem;
+}
+
+.student-course-panel .course-card p {
+  font-size: 0.88rem;
+}
+
+@media (min-width: 1200px) {
+  .student-course-panel {
+    flex-basis: 20%;
+    max-width: 20%;
+  }
+
+  .student-announcement-panel {
+    flex-basis: 80%;
+    max-width: 80%;
+  }
 }
 
 .video-card {

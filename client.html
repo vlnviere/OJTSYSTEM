@@ -24,7 +24,6 @@
         <ul class="navbar-nav ms-auto gap-lg-1">
           <li class="nav-item"><a class="nav-link active" aria-current="page" href="#dashboard">My Learning</a></li>
           <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
-          <li class="nav-item"><a class="nav-link" href="#videos">Videos</a></li>
           <li class="nav-item"><a class="nav-link" href="#invitations">Invitations</a></li>
           <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
           <li class="nav-item"><a class="nav-link" href="#documents">Documents</a></li>
@@ -85,73 +84,22 @@
     </section>
 
     <section class="row g-3 mb-3 student-feed">
-      <div class="col-12 col-xl-5" id="announcements">
+      <div class="student-course-panel" id="courses">
         <section class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
-              <div>
-                <p class="section-label mb-1">Class updates</p>
-                <h2 class="h5 mb-0">Announcements</h2>
-              </div>
-              <span class="badge text-bg-info align-self-start" id="studentAnnouncementClass">Current classroom</span>
-            </div>
-            <div class="announcement-list vstack gap-3" id="studentAnnouncements"></div>
-          </div>
-        </section>
-      </div>
-
-      <div class="col-12 col-xl-7" id="videos">
-        <section class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
-              <div>
-                <p class="section-label mb-1">Watch lessons</p>
-                <h2 class="h5 mb-0">Admin Posted Videos</h2>
-              </div>
-              <span class="badge text-bg-info align-self-start" id="studentVideoClass">Current classroom</span>
-            </div>
-            <div class="row g-3" id="studentVideos"></div>
-          </div>
-        </section>
-      </div>
-    </section>
-
-    <section class="row g-3 mb-3" id="invitations">
-      <div class="col-12">
-        <section class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
-              <div>
-                <p class="section-label mb-1">Enrollment</p>
-                <h2 class="h5 mb-0">Class Invitations</h2>
-              </div>
-              <span class="badge text-bg-info align-self-start" id="studentInvitationClass">Current classroom</span>
-            </div>
-            <div class="vstack gap-3" id="studentInvitations"></div>
-          </div>
-        </section>
-      </div>
-    </section>
-
-    <section class="row g-3">
-      <div class="col-12 col-xl-8" id="courses">
-        <section class="card h-100">
           <div class="card-body">
             <form class="course-search course-search-wide d-flex gap-2 mb-3" role="search">
               <label class="visually-hidden" for="clientCourseSearch">Search courses</label>
-              <input class="form-control" id="clientCourseSearch" type="search" placeholder="Search assigned course names">
+              <input class="form-control" id="clientCourseSearch" type="search" placeholder="Search courses">
               <button class="btn btn-outline-secondary" type="submit">Search</button>
             </form>
 
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
-              <div>
-                <p class="section-label mb-1">Deliver courses</p>
-                <h2 class="h5 mb-0">Assigned Courses</h2>
-              </div>
-              <div class="btn-group align-self-start" role="group" aria-label="Course filter">
+            <div class="mb-3">
+              <p class="section-label mb-1">Deliver courses</p>
+              <h2 class="h5 mb-3">Assigned Courses</h2>
+              <div class="btn-group btn-group-sm" role="group" aria-label="Course filter">
                 <button class="btn btn-outline-primary active" type="button" data-filter="all">All</button>
-                <button class="btn btn-outline-primary" type="button" data-filter="live">In Progress</button>
-                <button class="btn btn-outline-primary" type="button" data-filter="draft">Upcoming</button>
+                <button class="btn btn-outline-primary" type="button" data-filter="live">Active</button>
+                <button class="btn btn-outline-primary" type="button" data-filter="draft">Soon</button>
               </div>
             </div>
 
@@ -217,7 +165,51 @@
         </section>
       </div>
 
-      <div class="col-12 col-xl-4">
+      <div class="student-announcement-panel" id="announcements">
+        <section class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
+              <div>
+                <p class="section-label mb-1">Class updates</p>
+                <h2 class="h5 mb-0">Announcements</h2>
+              </div>
+              <span class="badge text-bg-info align-self-start" id="studentAnnouncementClass">Current classroom</span>
+            </div>
+            <div class="announcement-list vstack gap-3 mb-4" id="studentAnnouncements"></div>
+            <div class="border-top pt-3">
+              <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
+                <div>
+                  <p class="section-label mb-1">Posted videos</p>
+                  <h3 class="h6 mb-0">Admin Posted Videos</h3>
+                </div>
+                <span class="badge text-bg-info align-self-start" id="studentVideoClass">Current classroom</span>
+              </div>
+              <div class="row g-3" id="studentVideos"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="row g-3 mb-3" id="invitations">
+      <div class="col-12">
+        <section class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
+              <div>
+                <p class="section-label mb-1">Enrollment</p>
+                <h2 class="h5 mb-0">Class Invitations</h2>
+              </div>
+              <span class="badge text-bg-info align-self-start" id="studentInvitationClass">Current classroom</span>
+            </div>
+            <div class="vstack gap-3" id="studentInvitations"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="row g-3">
+      <div class="col-12">
         <section class="card mb-3">
           <div class="card-body">
             <p class="section-label mb-1">Track</p>
