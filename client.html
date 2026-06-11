@@ -39,11 +39,6 @@
       </div>
       <div class="d-flex flex-wrap gap-2 align-items-start">
         <button class="btn btn-outline-secondary dashboard-back" type="button">Return</button>
-        <form class="course-search d-flex gap-2" role="search">
-          <label class="visually-hidden" for="clientCourseSearch">Search courses</label>
-          <input class="form-control" id="clientCourseSearch" type="search" placeholder="Search courses">
-          <button class="btn btn-outline-secondary" type="submit">Search</button>
-        </form>
       </div>
     </header>
 
@@ -90,6 +85,12 @@
       <div class="col-12 col-xl-8" id="courses">
         <section class="card h-100">
           <div class="card-body">
+            <form class="course-search course-search-wide d-flex gap-2 mb-3" role="search">
+              <label class="visually-hidden" for="clientCourseSearch">Search courses</label>
+              <input class="form-control" id="clientCourseSearch" type="search" placeholder="Search assigned course names">
+              <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </form>
+
             <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
               <div>
                 <p class="section-label mb-1">Deliver courses</p>
