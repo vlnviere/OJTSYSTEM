@@ -152,6 +152,17 @@ body {
 .course-card {
   box-shadow: none;
   overflow: hidden;
+  transition: box-shadow 0.35s ease, transform 0.35s ease, border-color 0.35s ease;
+}
+
+.course-card.course-search-match {
+  border-color: var(--gth-cyan);
+  box-shadow: 0 22px 55px rgba(8, 127, 155, 0.24);
+  transform: translateY(-0.35rem);
+}
+
+.course-search .form-control {
+  width: min(45vw, 16rem);
 }
 
 .course-strip {

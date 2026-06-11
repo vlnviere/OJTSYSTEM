@@ -10,6 +10,8 @@ const portalLoginError = document.querySelector("#portalLoginError");
 const clientLogout = document.querySelector("#clientLogout");
 const classroomName = document.querySelector("#classroomName");
 const classroomLabel = document.querySelector("#classroomLabel");
+const courseSearchForms = document.querySelectorAll(".course-search");
+const dashboardBackButtons = document.querySelectorAll(".dashboard-back");
 
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -22,6 +24,50 @@ filterButtons.forEach((button) => {
       const isVisible = filter === "all" || card.dataset.status === filter;
       card.classList.toggle("d-none", !isVisible);
     });
+  });
+});
+
+dashboardBackButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+
+    window.location.href = "index.html";
+  });
+});
+
+courseSearchForms.forEach((form) => {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const query = form.querySelector("input[type='search']").value.trim().toLowerCase();
+    if (!query) return;
+
+    const cards = Array.from(document.querySelectorAll(".course-card"));
+    const match = cards.find((card) => {
+      const title = card.querySelector("h3")?.textContent.trim().toLowerCase() || "";
+      return title.includes(query);
+    });
+
+    cards.forEach((card) => card.classList.remove("course-search-match"));
+
+    if (!match) {
+      form.querySelector("input[type='search']").classList.add("is-invalid");
+      setTimeout(() => {
+        form.querySelector("input[type='search']").classList.remove("is-invalid");
+      }, 1200);
+      return;
+    }
+
+    match.classList.remove("d-none");
+    match.scrollIntoView({ behavior: "smooth", block: "center" });
+    match.classList.add("course-search-match");
+
+    setTimeout(() => {
+      match.classList.remove("course-search-match");
+    }, 2200);
   });
 });
 
