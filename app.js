@@ -342,8 +342,50 @@ function extractYoutubeId(url) {
 }
 
 function renderVideoCard(video, options = {}) {
+  if (!options.admin) {
+    const wrapper = document.createElement("article");
+    wrapper.className = "col-12";
+
+    const card = document.createElement("div");
+    card.className = "announcement-item video-announcement-item";
+    card.dataset.videoAction = "watch";
+    card.dataset.videoId = video.id;
+    card.role = "button";
+    card.tabIndex = 0;
+
+    const thumbnail = document.createElement("img");
+    thumbnail.className = "video-announcement-thumb";
+    thumbnail.src = `https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`;
+    thumbnail.alt = "";
+
+    const content = document.createElement("div");
+    content.className = "video-announcement-content";
+
+    const meta = document.createElement("div");
+    meta.className = "d-flex flex-wrap gap-2 align-items-center mb-2";
+
+    const classroom = document.createElement("span");
+    classroom.className = "badge text-bg-info";
+    classroom.textContent = classroomTitles[video.classroom] || "Classroom";
+
+    const time = document.createElement("small");
+    time.className = "text-secondary";
+    time.textContent = formatDate(video.createdAt);
+
+    const title = document.createElement("h3");
+    title.className = "h6 mb-0";
+    title.textContent = video.title;
+
+    meta.append(classroom, time);
+    content.append(meta, title);
+    card.append(thumbnail, content);
+    wrapper.appendChild(card);
+
+    return wrapper;
+  }
+
   const wrapper = document.createElement("article");
-  wrapper.className = options.admin ? "col-12 col-md-6 col-xxl-4 video-card-column" : "col-12 col-md-6 video-card-column";
+  wrapper.className = "col-12 col-md-6 col-xxl-4 video-card-column";
 
   const card = document.createElement("div");
   card.className = "card video-resource h-100";
@@ -492,6 +534,16 @@ document.addEventListener("click", (event) => {
   if (actionButton.dataset.videoAction === "watch") {
     window.open(video.url, "_blank", "noopener");
   }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+
+  const actionButton = event.target.closest("[data-video-action]");
+  if (!actionButton) return;
+
+  event.preventDefault();
+  actionButton.click();
 });
 
 videoModal?.addEventListener("hidden.bs.modal", () => {
