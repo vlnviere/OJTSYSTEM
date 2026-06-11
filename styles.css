@@ -192,6 +192,89 @@ body {
   background: linear-gradient(135deg, #fffaf1, #fff);
 }
 
+.student-dashboard-shell {
+  display: grid;
+  grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.student-section-nav {
+  position: sticky;
+  top: 5.6rem;
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #d8e7ec;
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: 0 18px 45px rgba(12, 42, 51, 0.07);
+}
+
+.student-section-nav a {
+  display: block;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.45rem;
+  color: var(--gth-ink);
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.student-section-nav a:hover,
+.student-section-nav a:focus,
+.student-section-nav a.active {
+  color: var(--gth-teal);
+  background: #e8f6fa;
+  outline: 0;
+}
+
+.student-section-content {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.student-section-card {
+  display: none;
+  scroll-margin-top: 6rem;
+}
+
+.student-section-card.active {
+  display: block;
+}
+
+.student-course-grid,
+.grades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+}
+
+.grades-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+
+.grade-tile {
+  display: grid;
+  gap: 0.4rem;
+  padding: 1rem;
+  border: 1px solid #d8e7ec;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.grade-tile span {
+  color: #5f7279;
+  font-weight: 700;
+}
+
+.grade-tile strong {
+  color: var(--gth-teal);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
 .student-feed > [id] > .card {
   height: 100%;
 }
@@ -505,6 +588,22 @@ body {
 }
 
 @media (max-width: 767.98px) {
+  .student-dashboard-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .student-section-nav {
+    position: static;
+    display: flex;
+    overflow-x: auto;
+    padding: 0.5rem;
+  }
+
+  .student-section-nav a {
+    flex: 0 0 auto;
+    padding: 0.65rem 0.8rem;
+  }
+
   .course-strip {
     min-height: 5.5rem;
   }

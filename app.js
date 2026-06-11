@@ -34,6 +34,8 @@ const invitationForm = document.querySelector("#invitationForm");
 const studentInvitations = document.querySelector("#studentInvitations");
 const studentInvitationClass = document.querySelector("#studentInvitationClass");
 const enrollmentRequests = document.querySelector("#enrollmentRequests");
+const studentSectionLinks = document.querySelectorAll("[data-student-section-link]");
+const studentSections = document.querySelectorAll("[data-student-section]");
 
 const classroomTitles = {
   ict: "ICT OJT Classroom",
@@ -108,6 +110,47 @@ dashboardBackButtons.forEach((button) => {
     window.location.href = "index.html";
   });
 });
+
+function showStudentSection(sectionId, options = {}) {
+  if (!studentSections.length) return;
+
+  const targetSection = document.querySelector(`[data-student-section="${sectionId}"]`) || studentSections[0];
+  const targetId = targetSection.dataset.studentSection;
+
+  studentSections.forEach((section) => {
+    section.classList.toggle("active", section === targetSection);
+  });
+
+  studentSectionLinks.forEach((link) => {
+    const isActive = link.dataset.studentSectionLink === targetId;
+    link.classList.toggle("active", isActive);
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+
+  if (options.updateHash) {
+    history.replaceState(null, "", `#${targetId}`);
+  }
+}
+
+if (studentSections.length) {
+  const initialSection = window.location.hash.replace("#", "") || "announcements";
+  showStudentSection(initialSection);
+
+  studentSectionLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      showStudentSection(link.dataset.studentSectionLink, { updateHash: true });
+    });
+  });
+
+  window.addEventListener("hashchange", () => {
+    showStudentSection(window.location.hash.replace("#", "") || "announcements");
+  });
+}
 
 courseSearchForms.forEach((form) => {
   form.addEventListener("submit", (event) => {

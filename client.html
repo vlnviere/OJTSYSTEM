@@ -24,9 +24,10 @@
         <ul class="navbar-nav ms-auto gap-lg-1">
           <li class="nav-item"><a class="nav-link active" aria-current="page" href="#dashboard">My Learning</a></li>
           <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
-          <li class="nav-item"><a class="nav-link" href="#invitations">Invitations</a></li>
           <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
-          <li class="nav-item"><a class="nav-link" href="#documents">Documents</a></li>
+          <li class="nav-item"><a class="nav-link" href="#videos">Videos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#grades">Grades</a></li>
+          <li class="nav-item"><a class="nav-link" href="#student-chat">Student Chats</a></li>
           <li class="nav-item"><a class="nav-link" href="classrooms.html">Classrooms</a></li>
         </ul>
       </div>
@@ -83,27 +84,50 @@
       </div>
     </section>
 
-    <section class="row g-3 mb-3 student-feed">
-      <div class="student-course-panel" id="courses">
-        <section class="card">
+    <div class="student-dashboard-shell">
+      <aside class="student-section-nav" aria-label="Student sections">
+        <a href="#announcements" class="active" data-student-section-link="announcements">Announcements</a>
+        <a href="#courses" data-student-section-link="courses">Courses</a>
+        <a href="#videos" data-student-section-link="videos">Videos</a>
+        <a href="#grades" data-student-section-link="grades">Grades</a>
+        <a href="#student-chat" data-student-section-link="student-chat">Student Chats</a>
+      </aside>
+
+      <div class="student-section-content">
+        <section class="card student-section-card active" id="announcements" data-student-section="announcements">
+          <div class="card-body">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
+              <div>
+                <p class="section-label mb-1">Class updates</p>
+                <h2 class="h5 mb-0">Announcements</h2>
+              </div>
+              <span class="badge text-bg-info align-self-start" id="studentAnnouncementClass">Current classroom</span>
+            </div>
+            <div class="announcement-list vstack gap-3" id="studentAnnouncements"></div>
+          </div>
+        </section>
+
+        <section class="card student-section-card" id="courses" data-student-section="courses">
           <div class="card-body">
             <form class="course-search course-search-wide d-flex gap-2 mb-3" role="search">
               <label class="visually-hidden" for="clientCourseSearch">Search courses</label>
-              <input class="form-control" id="clientCourseSearch" type="search" placeholder="Search courses">
+              <input class="form-control" id="clientCourseSearch" type="search" placeholder="Search assigned course names">
               <button class="btn btn-outline-secondary" type="submit">Search</button>
             </form>
 
-            <div class="mb-3">
-              <p class="section-label mb-1">Deliver courses</p>
-              <h2 class="h5 mb-3">Assigned Courses</h2>
-              <div class="btn-group btn-group-sm" role="group" aria-label="Course filter">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+              <div>
+                <p class="section-label mb-1">Deliver courses</p>
+                <h2 class="h5 mb-0">Assigned Courses</h2>
+              </div>
+              <div class="btn-group align-self-start" role="group" aria-label="Course filter">
                 <button class="btn btn-outline-primary active" type="button" data-filter="all">All</button>
-                <button class="btn btn-outline-primary" type="button" data-filter="live">Active</button>
-                <button class="btn btn-outline-primary" type="button" data-filter="draft">Soon</button>
+                <button class="btn btn-outline-primary" type="button" data-filter="live">In Progress</button>
+                <button class="btn btn-outline-primary" type="button" data-filter="draft">Upcoming</button>
               </div>
             </div>
 
-            <div class="vstack gap-3" id="courseList">
+            <div class="student-course-grid" id="courseList">
               <article class="card course-card" data-status="live">
                 <div class="row g-0">
                   <div class="col-md-3 course-strip course-strip-primary"><span>01</span></div>
@@ -163,106 +187,53 @@
             </div>
           </div>
         </section>
-      </div>
 
-      <div class="student-announcement-panel" id="announcements">
-        <section class="card">
+        <section class="card student-section-card" id="videos" data-student-section="videos">
           <div class="card-body">
             <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
               <div>
-                <p class="section-label mb-1">Class updates</p>
-                <h2 class="h5 mb-0">Announcements</h2>
+                <p class="section-label mb-1">Posted videos</p>
+                <h2 class="h5 mb-0">Videos</h2>
               </div>
-              <span class="badge text-bg-info align-self-start" id="studentAnnouncementClass">Current classroom</span>
+              <span class="badge text-bg-info align-self-start" id="studentVideoClass">Current classroom</span>
             </div>
-            <div class="announcement-list vstack gap-3 mb-4" id="studentAnnouncements"></div>
-            <div class="border-top pt-3">
-              <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
-                <div>
-                  <p class="section-label mb-1">Posted videos</p>
-                  <h3 class="h6 mb-0">Admin Posted Videos</h3>
-                </div>
-                <span class="badge text-bg-info align-self-start" id="studentVideoClass">Current classroom</span>
-              </div>
-              <div class="row g-3" id="studentVideos"></div>
+            <div class="row g-3" id="studentVideos"></div>
+          </div>
+        </section>
+
+        <section class="card student-section-card" id="grades" data-student-section="grades">
+          <div class="card-body">
+            <p class="section-label mb-1">Grades</p>
+            <h2 class="h5 mb-3">Performance Summary</h2>
+            <div class="grades-grid">
+              <div class="grade-tile"><span>Coursework</span><strong>92%</strong></div>
+              <div class="grade-tile"><span>Quiz Average</span><strong>88%</strong></div>
+              <div class="grade-tile"><span>Attendance</span><strong>96%</strong></div>
+              <div class="grade-tile"><span>Final Standing</span><strong>91%</strong></div>
             </div>
           </div>
         </section>
-      </div>
-    </section>
 
-    <section class="row g-3 mb-3" id="invitations">
-      <div class="col-12">
-        <section class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
+        <section class="card student-section-card" id="student-chat" data-student-section="student-chat" data-role="student">
+          <div class="card-body" id="chatbox" data-role="student">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
               <div>
-                <p class="section-label mb-1">Enrollment</p>
-                <h2 class="h5 mb-0">Class Invitations</h2>
+                <p class="section-label mb-1">Class chat</p>
+                <h2 class="h5 mb-0">Student Chats</h2>
               </div>
-              <span class="badge text-bg-info align-self-start" id="studentInvitationClass">Current classroom</span>
+              <button class="btn btn-outline-secondary btn-sm chat-toggle" type="button">Minimize</button>
             </div>
-            <div class="vstack gap-3" id="studentInvitations"></div>
+            <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+            <form class="chat-form d-flex gap-2 mt-2" id="chatForm">
+              <label class="visually-hidden" for="chatMessage">Message</label>
+              <input class="form-control" id="chatMessage" type="text" placeholder="Type a message" required>
+              <button class="btn btn-primary" type="submit">Send</button>
+            </form>
           </div>
         </section>
       </div>
-    </section>
-
-    <section class="row g-3">
-      <div class="col-12">
-        <section class="card mb-3">
-          <div class="card-body">
-            <p class="section-label mb-1">Track</p>
-            <h2 class="h5 mb-3">My Progress</h2>
-            <div class="list-group list-group-flush">
-              <div class="list-group-item d-flex justify-content-between px-0">
-                <span>Lessons completed</span>
-                <strong>18 / 23</strong>
-              </div>
-              <div class="list-group-item d-flex justify-content-between px-0">
-                <span>Quiz average</span>
-                <strong>88%</strong>
-              </div>
-              <div class="list-group-item d-flex justify-content-between px-0">
-                <span>Training hours</span>
-                <strong>14.5</strong>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card" id="documents">
-          <div class="card-body">
-            <p class="section-label mb-1">Document</p>
-            <h2 class="h5 mb-3">Learning Resources</h2>
-            <ul class="list-unstyled vstack gap-3 mb-0">
-              <li class="d-flex gap-2"><span class="file-pill">PDF</span><span>OJT Handbook<br><small class="text-secondary">Required reading</small></span></li>
-              <li class="d-flex gap-2"><span class="file-pill">DOC</span><span>Evaluation Rubric<br><small class="text-secondary">Assessment guide</small></span></li>
-              <li class="d-flex gap-2"><span class="file-pill">VID</span><span>Orientation Recording<br><small class="text-secondary">24 min</small></span></li>
-            </ul>
-          </div>
-        </section>
-      </div>
-    </section>
-  </main>
-
-  <aside class="chatbox card" id="chatbox" data-role="student">
-    <div class="card-body p-3">
-      <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-        <div>
-          <p class="section-label mb-1">Class chat</p>
-          <h2 class="h6 mb-0" id="chatTitle">Student Chat</h2>
-        </div>
-        <button class="btn btn-outline-secondary btn-sm chat-toggle" type="button">Minimize</button>
-      </div>
-      <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
-      <form class="chat-form d-flex gap-2 mt-2" id="chatForm">
-        <label class="visually-hidden" for="chatMessage">Message</label>
-        <input class="form-control" id="chatMessage" type="text" placeholder="Type a message" required>
-        <button class="btn btn-primary" type="submit">Send</button>
-      </form>
     </div>
-  </aside>
+  </main>
 
   <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
