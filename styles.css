@@ -192,7 +192,7 @@ body {
   background: linear-gradient(135deg, #fffaf1, #fff);
 }
 
-.announcement-list-collapsed {
+.announcement-card-body-collapsed {
   display: none !important;
 }
 
@@ -576,10 +576,6 @@ body {
   z-index: 1030;
   width: min(24rem, calc(100vw - 2rem));
   box-shadow: 0 24px 70px rgba(12, 42, 51, 0.2);
-}
-
-#adminLogin:not(.d-none) ~ .chatbox {
-  display: none;
 }
 
 .chat-messages {

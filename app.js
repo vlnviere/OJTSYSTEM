@@ -1,10 +1,7 @@
 const filterButtons = document.querySelectorAll("[data-filter]");
 const courseCards = document.querySelectorAll(".course-card");
-const adminLogin = document.querySelector("#adminLogin");
 const adminApp = document.querySelector("#adminApp");
-const adminLoginForm = document.querySelector("#adminLoginForm");
 const adminLogout = document.querySelector("#adminLogout");
-const loginError = document.querySelector("#loginError");
 const portalLoginForm = document.querySelector("#portalLoginForm");
 const portalLoginError = document.querySelector("#portalLoginError");
 const clientLogout = document.querySelector("#clientLogout");
@@ -16,7 +13,6 @@ const announcementForm = document.querySelector("#announcementForm");
 const adminAnnouncements = document.querySelector("#adminAnnouncements");
 const studentAnnouncements = document.querySelector("#studentAnnouncements");
 const studentAnnouncementClass = document.querySelector("#studentAnnouncementClass");
-const announcementToggles = document.querySelectorAll(".announcement-toggle");
 const chatbox = document.querySelector("#chatbox");
 const chatForm = document.querySelector("#chatForm");
 const chatMessage = document.querySelector("#chatMessage");
@@ -28,6 +24,10 @@ const videoError = document.querySelector("#videoError");
 const adminVideos = document.querySelector("#adminVideos");
 const studentVideos = document.querySelector("#studentVideos");
 const studentVideoClass = document.querySelector("#studentVideoClass");
+const assignmentForm = document.querySelector("#assignmentForm");
+const adminAssignments = document.querySelector("#adminAssignments");
+const studentAssignments = document.querySelector("#studentAssignments");
+const studentAssignmentClass = document.querySelector("#studentAssignmentClass");
 const videoModal = document.querySelector("#videoModal");
 const videoModalFrame = document.querySelector("#videoModalFrame");
 const videoModalLabel = document.querySelector("#videoModalLabel");
@@ -74,6 +74,17 @@ const demoVideos = [
     youtubeId: "dQw4w9WgXcQ",
     url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     createdAt: "2026-06-11T10:00:00.000Z"
+  }
+];
+
+const demoAssignments = [
+  {
+    id: "demo-assignment-ict",
+    classroom: "ict",
+    title: "Onboarding Checklist Submission",
+    instructions: "Upload your completed onboarding checklist and supervisor acknowledgment.",
+    dueDate: "2026-06-18",
+    createdAt: "2026-06-11T12:00:00.000Z"
   }
 ];
 
@@ -202,7 +213,7 @@ function saveStoredItems(key, items) {
 }
 
 function getCurrentAuthor() {
-  return document.body.contains(adminApp) ? "Admin" : "Student";
+  return adminApp ? "Admin" : "Student";
 }
 
 function formatDate(value) {
@@ -247,6 +258,19 @@ function renderAnnouncementCard(announcement, options = {}) {
   time.textContent = formatDate(announcement.createdAt);
   meta.appendChild(time);
 
+  const toggleButton = document.createElement("button");
+  toggleButton.className = "btn btn-outline-secondary btn-sm ms-auto";
+  toggleButton.type = "button";
+  toggleButton.dataset.announcementAction = "toggle-collapse";
+  toggleButton.textContent = "Minimize";
+
+  const header = document.createElement("div");
+  header.className = "d-flex flex-wrap align-items-start gap-2";
+  header.append(meta, toggleButton);
+
+  const body = document.createElement("div");
+  body.className = "announcement-card-body";
+
   const subject = document.createElement("h3");
   subject.className = "h6 mb-1";
   subject.textContent = announcement.subject;
@@ -255,7 +279,7 @@ function renderAnnouncementCard(announcement, options = {}) {
   message.className = "mb-0 text-secondary";
   message.textContent = announcement.message;
 
-  article.append(meta, subject, message);
+  body.append(subject, message);
 
   const comments = getAnnouncementComments(announcement.id);
   const commentsSection = document.createElement("div");
@@ -315,7 +339,7 @@ function renderAnnouncementCard(announcement, options = {}) {
 
   commentForm.append(commentLabel, commentInput, commentButton);
   commentsSection.append(commentsTitle, commentsList, commentForm);
-  article.appendChild(commentsSection);
+  body.appendChild(commentsSection);
 
   if (options.admin) {
     const actions = document.createElement("div");
@@ -336,9 +360,10 @@ function renderAnnouncementCard(announcement, options = {}) {
     removeButton.textContent = "Remove";
 
     actions.append(pinButton, removeButton);
-    article.appendChild(actions);
+    body.appendChild(actions);
   }
 
+  article.append(header, body);
   return article;
 }
 
@@ -434,11 +459,21 @@ document.addEventListener("click", (event) => {
   const actionButton = event.target.closest("[data-announcement-action]");
   if (!actionButton) return;
 
+  if (actionButton.dataset.announcementAction === "toggle-collapse") {
+    const body = actionButton.closest(".announcement-item")?.querySelector(".announcement-card-body");
+    if (!body) return;
+
+    body.classList.toggle("announcement-card-body-collapsed");
+    actionButton.textContent = body.classList.contains("announcement-card-body-collapsed") ? "Open" : "Minimize";
+    return;
+  }
+
   const announcements = getAnnouncements();
   const announcementId = actionButton.dataset.announcementId;
 
   if (actionButton.dataset.announcementAction === "remove") {
     saveStoredItems("gthAnnouncements", announcements.filter((item) => item.id !== announcementId));
+    saveStoredItems("gthAnnouncementComments", getAllAnnouncementComments().filter((item) => item.announcementId !== announcementId));
     renderAnnouncements();
     return;
   }
@@ -690,6 +725,152 @@ videoModal?.addEventListener("hidden.bs.modal", () => {
   if (videoModalFrame) videoModalFrame.src = "";
 });
 
+function getAssignments() {
+  const stored = getStoredItems("gthAssignments", null);
+  if (stored) return stored;
+
+  saveStoredItems("gthAssignments", demoAssignments);
+  return demoAssignments;
+}
+
+function formatDueDate(value) {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(new Date(`${value}T00:00:00`));
+}
+
+function renderAssignmentCard(assignment, options = {}) {
+  const wrapper = document.createElement("article");
+  wrapper.className = options.admin ? "col-12 col-md-6 col-xxl-4" : "col-12";
+
+  const card = document.createElement("div");
+  card.className = options.admin ? "card video-resource h-100" : "announcement-item";
+
+  const body = document.createElement("div");
+  body.className = options.admin ? "card-body" : "";
+
+  const meta = document.createElement("div");
+  meta.className = "d-flex flex-wrap gap-2 align-items-center mb-2";
+
+  const classroom = document.createElement("span");
+  classroom.className = "badge text-bg-info";
+  classroom.textContent = classroomTitles[assignment.classroom] || "Classroom";
+
+  const dueDate = document.createElement("span");
+  dueDate.className = "badge text-bg-warning";
+  dueDate.textContent = `Due ${formatDueDate(assignment.dueDate)}`;
+
+  const created = document.createElement("small");
+  created.className = "text-secondary";
+  created.textContent = formatDate(assignment.createdAt);
+
+  const title = document.createElement("h3");
+  title.className = "h6 mb-2";
+  title.textContent = assignment.title;
+
+  const instructions = document.createElement("p");
+  instructions.className = "text-secondary mb-0";
+  instructions.textContent = assignment.instructions;
+
+  meta.append(classroom, dueDate, created);
+  body.append(meta, title, instructions);
+
+  if (options.admin) {
+    const actions = document.createElement("div");
+    actions.className = "d-flex flex-wrap gap-2 mt-3";
+
+    const removeButton = document.createElement("button");
+    removeButton.className = "btn btn-outline-danger btn-sm";
+    removeButton.type = "button";
+    removeButton.dataset.assignmentAction = "remove";
+    removeButton.dataset.assignmentId = assignment.id;
+    removeButton.textContent = "Remove";
+
+    actions.appendChild(removeButton);
+    body.appendChild(actions);
+  }
+
+  card.appendChild(body);
+  wrapper.appendChild(card);
+  return wrapper;
+}
+
+function renderAssignments() {
+  const assignments = getAssignments().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  if (adminAssignments) {
+    adminAssignments.replaceChildren();
+
+    if (!assignments.length) {
+      const empty = document.createElement("p");
+      empty.className = "col-12 text-secondary mb-0";
+      empty.textContent = "No assignments posted yet.";
+      adminAssignments.appendChild(empty);
+    } else {
+      assignments.forEach((assignment) => {
+        adminAssignments.appendChild(renderAssignmentCard(assignment, { admin: true }));
+      });
+    }
+  }
+
+  if (studentAssignments) {
+    const classroomAssignments = assignments.filter((assignment) => {
+      return assignment.classroom === selectedClassroom || assignment.classroom === "all";
+    });
+
+    studentAssignments.replaceChildren();
+    if (studentAssignmentClass) studentAssignmentClass.textContent = selectedClassroomTitle;
+
+    if (!classroomAssignments.length) {
+      const empty = document.createElement("p");
+      empty.className = "text-secondary mb-0";
+      empty.textContent = "No assignments for this classroom yet.";
+      studentAssignments.appendChild(empty);
+      return;
+    }
+
+    classroomAssignments.forEach((assignment) => {
+      studentAssignments.appendChild(renderAssignmentCard(assignment));
+    });
+  }
+}
+
+assignmentForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const title = document.querySelector("#assignmentTitle").value.trim();
+  const instructions = document.querySelector("#assignmentInstructions").value.trim();
+  const dueDate = document.querySelector("#assignmentDueDate").value;
+
+  if (!title || !instructions || !dueDate) return;
+
+  const assignments = getAssignments();
+  assignments.unshift({
+    id: `assignment-${Date.now()}`,
+    classroom: document.querySelector("#assignmentClassroom").value,
+    title,
+    instructions,
+    dueDate,
+    createdAt: new Date().toISOString()
+  });
+
+  saveStoredItems("gthAssignments", assignments);
+  assignmentForm.reset();
+  renderAssignments();
+});
+
+document.addEventListener("click", (event) => {
+  const actionButton = event.target.closest("[data-assignment-action]");
+  if (!actionButton) return;
+
+  if (actionButton.dataset.assignmentAction === "remove") {
+    saveStoredItems("gthAssignments", getAssignments().filter((item) => item.id !== actionButton.dataset.assignmentId));
+    renderAssignments();
+  }
+});
+
 function getActiveChatClassroom() {
   if (chatClassroom) return chatClassroom.value;
   return selectedClassroom;
@@ -755,16 +936,6 @@ chatForm?.addEventListener("submit", (event) => {
   renderChatMessages();
 });
 
-announcementToggles.forEach((toggle) => {
-  toggle.addEventListener("click", () => {
-    const announcementList = toggle.closest(".card-body")?.querySelector(".announcement-list");
-    if (!announcementList) return;
-
-    announcementList.classList.toggle("announcement-list-collapsed");
-    toggle.textContent = announcementList.classList.contains("announcement-list-collapsed") ? "Open" : "Minimize";
-  });
-});
-
 chatToggles.forEach((toggle) => {
   toggle.addEventListener("click", () => {
     chatbox?.classList.toggle("chatbox-collapsed");
@@ -772,41 +943,18 @@ chatToggles.forEach((toggle) => {
   });
 });
 
-function showAdminApp() {
-  adminLogin?.classList.add("d-none");
-  adminApp?.classList.remove("d-none");
-}
-
-function showAdminLogin() {
-  adminApp?.classList.add("d-none");
-  adminLogin?.classList.remove("d-none");
-}
-
-if (adminLoginForm && adminLogin && adminApp) {
-  if (sessionStorage.getItem("gthAdminLoggedIn") === "true") {
-    showAdminApp();
+function redirectAdminIfLoggedOut() {
+  if (adminApp && sessionStorage.getItem("gthAdminLoggedIn") !== "true") {
+    window.location.replace("login.html");
   }
-
-  adminLoginForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const username = document.querySelector("#adminUsername").value.trim();
-    const password = document.querySelector("#adminPassword").value;
-
-    if (username.toLowerCase() === "admin" && password === "123") {
-      sessionStorage.setItem("gthAdminLoggedIn", "true");
-      loginError.classList.add("d-none");
-      showAdminApp();
-      return;
-    }
-
-    loginError.classList.remove("d-none");
-  });
 }
+
+redirectAdminIfLoggedOut();
+window.addEventListener("pageshow", redirectAdminIfLoggedOut);
 
 adminLogout?.addEventListener("click", () => {
   sessionStorage.removeItem("gthAdminLoggedIn");
-  window.location.href = "login.html";
+  window.location.replace("login.html");
 });
 
 portalLoginForm?.addEventListener("submit", (event) => {
@@ -817,13 +965,13 @@ portalLoginForm?.addEventListener("submit", (event) => {
 
   if (username.toLowerCase() === "admin" && password === "123") {
     sessionStorage.setItem("gthAdminLoggedIn", "true");
-    window.location.href = "admin.html";
+    window.location.replace("admin.html");
     return;
   }
 
   if (username.toLowerCase() === "user" && password === "321") {
     sessionStorage.setItem("gthClientLoggedIn", "true");
-    window.location.href = "classrooms.html";
+    window.location.replace("classrooms.html");
     return;
   }
 
@@ -832,11 +980,11 @@ portalLoginForm?.addEventListener("submit", (event) => {
 
 clientLogout?.addEventListener("click", () => {
   sessionStorage.removeItem("gthClientLoggedIn");
-  window.location.href = "login.html";
+  window.location.replace("login.html");
 });
 
 if ((document.body.contains(clientLogout) || classroomName) && sessionStorage.getItem("gthClientLoggedIn") !== "true") {
-  window.location.href = "login.html";
+  window.location.replace("login.html");
 }
 
 if (selectedClassroomTitle) {
@@ -846,4 +994,5 @@ if (selectedClassroomTitle) {
 
 renderAnnouncements();
 renderVideos();
+renderAssignments();
 renderChatMessages();
