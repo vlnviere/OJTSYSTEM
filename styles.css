@@ -171,15 +171,62 @@ body {
 }
 
 .announcement-item {
-  padding: 1rem;
+  padding: 0.85rem;
   border: 1px solid #d8e7ec;
   border-radius: 0.5rem;
   background: #fff;
 }
 
+.announcement-item .badge,
+.video-resource .badge {
+  font-size: 0.72rem;
+}
+
+.announcement-item h3,
+.video-resource h3 {
+  line-height: 1.25;
+}
+
 .announcement-pinned {
   border-color: var(--gth-sand);
   background: linear-gradient(135deg, #fffaf1, #fff);
+}
+
+.student-feed > [id] > .card {
+  height: 100%;
+}
+
+.student-feed .announcement-list {
+  max-height: 24rem;
+  overflow-y: auto;
+  padding-right: 0.15rem;
+}
+
+.video-card {
+  width: 100%;
+}
+
+.video-resource {
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.video-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #e8f0f3;
+}
+
+.video-frame {
+  aspect-ratio: 16 / 9;
+  background: #07171c;
+}
+
+.video-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .course-strip {

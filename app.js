@@ -166,7 +166,7 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
-function renderAnnouncementCard(announcement) {
+function renderAnnouncementCard(announcement, options = {}) {
   const article = document.createElement("article");
   article.className = "announcement-item";
   if (announcement.pinned) article.classList.add("announcement-pinned");
@@ -200,6 +200,29 @@ function renderAnnouncementCard(announcement) {
   message.textContent = announcement.message;
 
   article.append(meta, subject, message);
+
+  if (options.admin) {
+    const actions = document.createElement("div");
+    actions.className = "d-flex flex-wrap gap-2 mt-3";
+
+    const pinButton = document.createElement("button");
+    pinButton.className = "btn btn-outline-secondary btn-sm";
+    pinButton.type = "button";
+    pinButton.dataset.announcementAction = "toggle-pin";
+    pinButton.dataset.announcementId = announcement.id;
+    pinButton.textContent = announcement.pinned ? "Remove Pin" : "Pin";
+
+    const removeButton = document.createElement("button");
+    removeButton.className = "btn btn-outline-danger btn-sm";
+    removeButton.type = "button";
+    removeButton.dataset.announcementAction = "remove";
+    removeButton.dataset.announcementId = announcement.id;
+    removeButton.textContent = "Remove";
+
+    actions.append(pinButton, removeButton);
+    article.appendChild(actions);
+  }
+
   return article;
 }
 
@@ -220,7 +243,7 @@ function renderAnnouncements() {
   if (adminAnnouncements) {
     adminAnnouncements.replaceChildren();
     announcements.forEach((announcement) => {
-      adminAnnouncements.appendChild(renderAnnouncementCard(announcement));
+      adminAnnouncements.appendChild(renderAnnouncementCard(announcement, { admin: true }));
     });
   }
 
@@ -265,6 +288,190 @@ announcementForm?.addEventListener("submit", (event) => {
   saveStoredItems("gthAnnouncements", announcements);
   announcementForm.reset();
   renderAnnouncements();
+});
+
+function getVideos() {
+  const stored = getStoredItems("gthVideos", null);
+  if (stored) return stored;
+
+  saveStoredItems("gthVideos", demoVideos);
+  return demoVideos;
+}
+
+function extractYoutubeId(url) {
+  try {
+    const parsedUrl = new URL(url);
+
+    if (parsedUrl.hostname.includes("youtu.be")) {
+      return parsedUrl.pathname.replace("/", "");
+    }
+
+    if (parsedUrl.searchParams.has("v")) {
+      return parsedUrl.searchParams.get("v");
+    }
+
+    const embedMatch = parsedUrl.pathname.match(/\/embed\/([^/?]+)/);
+    return embedMatch ? embedMatch[1] : "";
+  } catch {
+    return "";
+  }
+}
+
+function renderVideoCard(video, options = {}) {
+  const wrapper = document.createElement("article");
+  wrapper.className = options.admin ? "video-card" : "col-12 col-md-6 video-card-column";
+
+  const card = document.createElement("div");
+  card.className = "card video-resource h-100";
+
+  const thumbnail = document.createElement("img");
+  thumbnail.className = "video-thumb";
+  thumbnail.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+  thumbnail.alt = "";
+
+  const body = document.createElement("div");
+  body.className = "card-body";
+
+  const meta = document.createElement("div");
+  meta.className = "d-flex flex-wrap gap-2 align-items-center mb-2";
+
+  const classroom = document.createElement("span");
+  classroom.className = "badge text-bg-info";
+  classroom.textContent = classroomTitles[video.classroom] || "Classroom";
+
+  const time = document.createElement("small");
+  time.className = "text-secondary";
+  time.textContent = formatDate(video.createdAt);
+
+  meta.append(classroom, time);
+
+  const title = document.createElement("h3");
+  title.className = "h6 mb-3";
+  title.textContent = video.title;
+
+  const actions = document.createElement("div");
+  actions.className = "d-flex flex-wrap gap-2";
+
+  const watchButton = document.createElement("button");
+  watchButton.className = "btn btn-primary btn-sm";
+  watchButton.type = "button";
+  watchButton.dataset.videoAction = "watch";
+  watchButton.dataset.videoId = video.id;
+  watchButton.textContent = "Watch";
+  actions.appendChild(watchButton);
+
+  if (options.admin) {
+    const removeButton = document.createElement("button");
+    removeButton.className = "btn btn-outline-danger btn-sm";
+    removeButton.type = "button";
+    removeButton.dataset.videoAction = "remove";
+    removeButton.dataset.videoId = video.id;
+    removeButton.textContent = "Remove";
+    actions.appendChild(removeButton);
+  }
+
+  body.append(meta, title, actions);
+  card.append(thumbnail, body);
+  wrapper.appendChild(card);
+
+  return wrapper;
+}
+
+function renderVideos() {
+  const videos = getVideos().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  if (adminVideos) {
+    adminVideos.replaceChildren();
+
+    if (!videos.length) {
+      const empty = document.createElement("p");
+      empty.className = "text-secondary mb-0";
+      empty.textContent = "No videos posted yet.";
+      adminVideos.appendChild(empty);
+    } else {
+      videos.forEach((video) => {
+        adminVideos.appendChild(renderVideoCard(video, { admin: true }));
+      });
+    }
+  }
+
+  if (studentVideos) {
+    const classroomVideos = videos.filter((video) => {
+      return video.classroom === selectedClassroom || video.classroom === "all";
+    });
+
+    studentVideos.replaceChildren();
+    if (studentVideoClass) studentVideoClass.textContent = selectedClassroomTitle;
+
+    if (!classroomVideos.length) {
+      const empty = document.createElement("p");
+      empty.className = "text-secondary mb-0";
+      empty.textContent = "No videos for this classroom yet.";
+      studentVideos.appendChild(empty);
+      return;
+    }
+
+    classroomVideos.forEach((video) => {
+      studentVideos.appendChild(renderVideoCard(video));
+    });
+  }
+}
+
+videoForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const url = document.querySelector("#videoUrl").value.trim();
+  const youtubeId = extractYoutubeId(url);
+
+  if (!youtubeId) {
+    videoError?.classList.remove("d-none");
+    return;
+  }
+
+  const videos = getVideos();
+  videos.unshift({
+    id: `video-${Date.now()}`,
+    classroom: document.querySelector("#videoClassroom").value,
+    title: document.querySelector("#videoTitle").value.trim(),
+    youtubeId,
+    url,
+    createdAt: new Date().toISOString()
+  });
+
+  saveStoredItems("gthVideos", videos);
+  videoError?.classList.add("d-none");
+  videoForm.reset();
+  renderVideos();
+});
+
+document.addEventListener("click", (event) => {
+  const actionButton = event.target.closest("[data-video-action]");
+  if (!actionButton) return;
+
+  const videos = getVideos();
+  const video = videos.find((item) => item.id === actionButton.dataset.videoId);
+  if (!video) return;
+
+  if (actionButton.dataset.videoAction === "remove") {
+    saveStoredItems("gthVideos", videos.filter((item) => item.id !== video.id));
+    renderVideos();
+    return;
+  }
+
+  if (actionButton.dataset.videoAction === "watch" && videoModal && videoModalFrame) {
+    videoModalFrame.src = `https://www.youtube.com/embed/${video.youtubeId}`;
+    if (videoModalLabel) videoModalLabel.textContent = video.title;
+    bootstrap.Modal.getOrCreateInstance(videoModal).show();
+    return;
+  }
+
+  if (actionButton.dataset.videoAction === "watch") {
+    window.open(video.url, "_blank", "noopener");
+  }
+});
+
+videoModal?.addEventListener("hidden.bs.modal", () => {
+  if (videoModalFrame) videoModalFrame.src = "";
 });
 
 function getActiveChatClassroom() {
@@ -371,7 +578,7 @@ if (adminLoginForm && adminLogin && adminApp) {
 
 adminLogout?.addEventListener("click", () => {
   sessionStorage.removeItem("gthAdminLoggedIn");
-  showAdminLogin();
+  window.location.href = "login.html";
 });
 
 portalLoginForm?.addEventListener("submit", (event) => {
@@ -410,4 +617,5 @@ if (selectedClassroomTitle) {
 }
 
 renderAnnouncements();
+renderVideos();
 renderChatMessages();
